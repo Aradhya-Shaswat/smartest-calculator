@@ -30,7 +30,7 @@ const App = () => {
 
     const timeout = setTimeout(() => {
       setShowPopup(true);
-    }, 25 * 10);
+    }, 2 * 60 * 1000);
 
     return () => {
       clearInterval(interval);
