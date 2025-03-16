@@ -214,7 +214,7 @@ const App = () => {
         fontSize="12px"
         style={{ marginTop: "15px" }}
       >
-        <Typography variant="caption">Made in <b>Scrapyard Patna</b></Typography>
+        <Typography variant="caption">Made in <b>Scrapyard Patna</b> V4</Typography>
         <Typography variant="caption">Sponsored by <b>Hetzenr</b></Typography>
       </Box>
 
