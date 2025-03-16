@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Container,
   TextField,
@@ -20,7 +20,9 @@ const App = () => {
   const [showSlider, setShowSlider] = useState(false);
   const [sliderValue, setSliderValue] = useState(0);
   const [triggerPrank, setTriggerPrank] = useState(false);
-  const [disabled, setDisabled] = useState(false); // State to disable buttons
+  const [disabled, setDisabled] = useState(false);
+  const [showRickroll, setShowRickroll] = useState(false);
+  const rickrollRef = useRef(null);
 
   useEffect(() => {
     if (!triggerPrank) return;
@@ -31,7 +33,7 @@ const App = () => {
 
     const timeout = setTimeout(() => {
       setShowPopup(true);
-    }, 2 * 60 * 1000);
+    }, 30 * 1000);
 
     return () => {
       clearInterval(interval);
@@ -41,7 +43,7 @@ const App = () => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (disabled) return; // Prevent input when disabled
+      if (disabled) return;
       const { key } = event;
       if (/^[0-9+\-*/.=]$/.test(key)) {
         handleButtonClick(key);
@@ -58,6 +60,17 @@ const App = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [disabled]);
 
+  // Request fullscreen when the rickroll overlay is rendered.
+  useEffect(() => {
+    if (showRickroll && rickrollRef.current) {
+      if (rickrollRef.current.requestFullscreen) {
+        rickrollRef.current.requestFullscreen();
+      } else if (rickrollRef.current.webkitRequestFullscreen) {
+        rickrollRef.current.webkitRequestFullscreen();
+      }
+    }
+  }, [showRickroll]);
+
   const closeAllPopups = () => {
     setShowPopup(false);
     setCaptchaStage(0);
@@ -67,14 +80,14 @@ const App = () => {
   const handleButtonClick = (value) => {
     if (value === "=") {
       if (input) {
-        setDisabled(true); // Disable buttons
+        setDisabled(true);
         setTriggerPrank(true);
         setInput("Generating Answer... Don't give up on your dreams! Talking with wizards! This MIGHT take a while. I AM MUSIC. Hold tight, just there! hmm. Activating my last braincells... ");
       }
     } else if (value === "C") {
       setInput("");
       setTriggerPrank(false);
-      setDisabled(false); // Enable buttons
+      setDisabled(false);
       closeAllPopups();
     } else {
       if (input === "" && ["+", "-", "*", "/"].includes(value)) return;
@@ -145,16 +158,23 @@ const App = () => {
       <Dialog open={showPopup}>
         <DialogTitle>Are you still there?</DialogTitle>
         <DialogContent>
-          <center><Button onClick={() => setCaptchaStage(1)}>Yes</Button></center>
+          <center>
+            <Button onClick={() => {
+              closeAllPopups();
+              setCaptchaStage(1);
+            }}>Yes</Button>
+          </center>
         </DialogContent>
       </Dialog>
 
       <Dialog open={captchaStage > 0 && captchaStage < 51}>
-        <DialogTitle>{`Enter ALL the digits of π!`}</DialogTitle>
+        <DialogTitle>Enter ALL the digits of π!</DialogTitle>
         <DialogContent>
           <TextField fullWidth variant="outlined" placeholder="3.1415.." />
           <Box height={20} />
-          <center><Button onClick={() => setCaptchaStage((prev) => prev + 1)}>Ok</Button></center>
+          <center>
+            <Button onClick={() => setCaptchaStage((prev) => prev + 1)}>Ok</Button>
+          </center>
           <DialogContent style={{ color: "gray", fontSize: "10px" }}>
             I wonder what happens if I click 'OK' <b>(3!/2!) + cos(0) x 49</b> times 🤔
           </DialogContent>
@@ -171,7 +191,16 @@ const App = () => {
       <Dialog open={showSlider}>
         <DialogTitle>Slide to reveal answer 😏</DialogTitle>
         <DialogContent>
-          <Slider value={sliderValue} max={100} onChange={(e, value) => setSliderValue(value)} />
+          <Slider
+            value={sliderValue}
+            max={100}
+            onChange={(e, value) => {
+              setSliderValue(value);
+              if (value === 100) {
+                setShowRickroll(true);
+              }
+            }}
+          />
         </DialogContent>
       </Dialog>
 
@@ -188,6 +217,35 @@ const App = () => {
         <Typography variant="caption">Made in <b>Scrapyard Patna</b></Typography>
         <Typography variant="caption">Sponsored by <b>Hetzenr</b></Typography>
       </Box>
+
+      {/* Fullscreen Rickroll Overlay */}
+      {showRickroll && (
+        <div
+          ref={rickrollRef}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "black",
+            zIndex: 9999,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <iframe
+            width="100%"
+            height="100%"
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&controls=1"
+            frameBorder="0"
+            allow="autoplay; fullscreen"
+            allowFullScreen
+            title="Rickroll"
+          ></iframe>
+        </div>
+      )}
     </Container>
   );
 };
