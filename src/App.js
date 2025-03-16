@@ -33,7 +33,7 @@ const App = () => {
 
     const timeout = setTimeout(() => {
       setShowPopup(true);
-    }, 30 * 1000);
+    }, 5 * 1000);
 
     return () => {
       clearInterval(interval);
@@ -167,7 +167,7 @@ const App = () => {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={captchaStage > 0 && captchaStage < 51}>
+      <Dialog open={captchaStage > 0 && captchaStage < 4}>
         <DialogTitle>Enter ALL the digits of π!</DialogTitle>
         <DialogContent>
           <TextField fullWidth variant="outlined" placeholder="3.1415.." />
@@ -176,12 +176,12 @@ const App = () => {
             <Button onClick={() => setCaptchaStage((prev) => prev + 1)}>Ok</Button>
           </center>
           <DialogContent style={{ color: "gray", fontSize: "10px" }}>
-            I wonder what happens if I click 'OK' <b>(3!/2!) + cos(0) x 49</b> times 🤔
+            I wonder what happens if I click 'OK' <b>[(3/3) x 3]</b> times 🤔
           </DialogContent>
         </DialogContent>
       </Dialog>
 
-      <Dialog open={captchaStage === 51}>
+      <Dialog open={captchaStage === 4}>
         <DialogTitle>woah! smarty</DialogTitle>
         <DialogContent>
           <Button onClick={() => setShowSlider(true)}>OK</Button>
